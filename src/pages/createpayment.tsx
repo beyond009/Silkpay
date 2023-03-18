@@ -5,9 +5,9 @@ import { Header } from '@/components/Header'
 import { BookOpenIcon, CodeIcon, ShareIcon, PlusIcon } from '@heroicons/react/outline'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 
-const Home: FC = () => {
+const CreatePayment: FC = () => {
 	return (
-		<div className="flex flex-col items-top h-fit p-60  bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+		<div className="relative flex flex-col items-top min-h-screen p-60  bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
 			<ThemeSwitcher className="absolute bottom-6 right-6" />
 			<div className="max-w-6xl flex flex-col w-full mx-auto sm:px-6 lg:px-8">
 				<div className="card w-96 glass">
@@ -26,4 +26,4 @@ const Home: FC = () => {
 	)
 }
 
-export default Home
+export default CreatePayment
