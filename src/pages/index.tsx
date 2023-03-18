@@ -3,6 +3,8 @@ import { APP_NAME } from '@/lib/consts'
 import ConnectWallet from '@/components/ConnectWallet'
 import { Header } from '@/components/Header'
 import { BookOpenIcon, CodeIcon, ShareIcon, PlusIcon } from '@heroicons/react/outline'
+import Link from 'next/link'
+import Router from 'next/router'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 
 const Home: FC = () => {
@@ -15,7 +17,7 @@ const Home: FC = () => {
 						<h2 className="card-title text-black">Create payment</h2>
 						<p>some description</p>
 						<div className="card-actions justify-center mt-10">
-							<button className="btn btn-info gap-2">
+							<button className="btn btn-info gap-2" onClick={() => Router.push('/createpayment')}>
 								Create <PlusIcon width={24} height={24} />
 							</button>
 						</div>
