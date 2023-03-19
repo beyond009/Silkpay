@@ -52,6 +52,20 @@ const Payment: FC = () => {
 					<div className="stat-desc text-secondary">29 days remaining</div>
 				</div>
 			</div>
+			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
+				<div className="text-xl">Payer</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+			</div>
+			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
+				<div className="text-xl">Recipents whitelist</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+			</div>
 		</div>
 	)
 }
