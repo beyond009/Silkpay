@@ -9,9 +9,8 @@ import ThemeSwitcher from '@/components/ThemeSwitcher'
 
 const Home: FC = () => {
 	return (
-		<div className="flex flex-col items-top h-fit p-60  bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
-			<ThemeSwitcher className="absolute bottom-6 right-6" />
-			<div className="max-w-6xl flex flex-col w-full mx-auto sm:px-6 lg:px-8">
+		<div className="max-w-6xl flex flex-col items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
+			<div className="cards w-full flex gap-8 ">
 				<div className="card w-96 glass">
 					<div className="card-body">
 						<h2 className="card-title text-black">Create payment</h2>
@@ -23,6 +22,27 @@ const Home: FC = () => {
 						</div>
 					</div>
 				</div>
+				<div className="card w-96 glass">
+					<div className="card-body">
+						<h2 className="card-title text-black">Create payment</h2>
+						<p>some description</p>
+						<div className="card-actions justify-center mt-10">
+							<button className="btn btn-info gap-2" onClick={() => Router.push('/createpayment')}>
+								Create <PlusIcon width={24} height={24} />
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="text-3xl mt-7">Related payments</div>
+			<div className="flex flex-col gap-6 mt-7 w-full">
+				<div className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl">
+					Pay to xxxx xxx ETH
+				</div>
+				<div className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl">
+					Recive xxx ETH
+				</div>
+				<div className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"></div>
 			</div>
 		</div>
 	)
