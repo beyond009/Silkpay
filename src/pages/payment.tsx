@@ -57,7 +57,7 @@ const Payment: FC = () => {
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 			</div>
 			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
-				<div className="text-xl">Recipents whitelist</div>
+				<div className="text-xl">Recipients whitelist</div>
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
@@ -66,6 +66,9 @@ const Payment: FC = () => {
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 			</div>
+			<button className="btn btn-info gap-2 mt-12 mb-36" onClick={() => {}}>
+				Claim
+			</button>
 		</div>
 	)
 }
