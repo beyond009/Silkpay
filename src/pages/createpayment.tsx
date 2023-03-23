@@ -1,10 +1,12 @@
 import { FC, useState, useRef } from 'react'
 import { APP_NAME } from '@/lib/consts'
-import ConnectWallet from '@/components/ConnectWallet'
 import { Header } from '@/components/Header'
 import { ArrowLeftIcon } from '@heroicons/react/outline'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { BackButton } from '@/components/BackButton'
+import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import { useAccount } from 'wagmi'
+import { ethers } from 'ethers'
 
 const CreatePayment: FC = () => {
 	const [tabValue, setTabValue] = useState<number>(0)
@@ -13,14 +15,25 @@ const CreatePayment: FC = () => {
 	const multiRef = useRef()
 	const handleCreate = () => {
 		const amount = (amountRef.current as HTMLInputElement).value
+		let result = []
 		if (tabValue) {
 			const multi = (multiRef.current as HTMLTextAreaElement).value
-			let tempArray = multi.valueOf().split(/[\s,;:\t\r\n]+/)
-			console.log(tempArray)
+			result = multi.valueOf().split(/[\s,;:\t\r\n]+/)
 		} else {
 			const one = (oneRef.current as HTMLInputElement).value
+			result = [one]
+		}
+		if (window.ethereum) {
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			const signer = provider.getSigner()
+			const paymentContract = new ethers.Contract(
+				'0x0dc627cB3bB1319007A5500259e8A16e672d8328',
+				paymentABI,
+				signer
+			)
 		}
 	}
+
 	return (
 		<div className="flex flex-col w-full h-full items-start justify-start max-w-6xl sm:pt-0">
 			<div className="flex">
