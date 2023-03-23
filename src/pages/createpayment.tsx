@@ -5,11 +5,15 @@ import { ArrowLeftIcon } from '@heroicons/react/outline'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { BackButton } from '@/components/BackButton'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers } from 'ethers'
 
 const CreatePayment: FC = () => {
 	const [tabValue, setTabValue] = useState<number>(0)
+	const [lockDate, setLockDate] = useState<any>()
 	const amountRef = useRef()
 	const oneRef = useRef()
 	const multiRef = useRef()
@@ -23,6 +27,7 @@ const CreatePayment: FC = () => {
 			const one = (oneRef.current as HTMLInputElement).value
 			result = [one]
 		}
+		console.log(lockDate.unix())
 		if (window.ethereum) {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
@@ -42,6 +47,11 @@ const CreatePayment: FC = () => {
 			<div className="flex flex-col w-full gap-6 form mt-12">
 				<div className="flex text-2xl">Payment amount (ETH)</div>
 				<input ref={amountRef} type="text" placeholder="Type here" className="input input-bordered w-full" />
+				<div className="flex text-2xl">Locked until</div>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<DatePicker disablePast value={lockDate} onChange={newValue => setLockDate(newValue)} />
+				</LocalizationProvider>
+
 				<div className="tabs w-full">
 					<a
 						className={'tab tab-lifted tab-lg ' + (tabValue ? '' : 'tab-active')}
