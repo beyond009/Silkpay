@@ -7,6 +7,7 @@ import { BackButton } from '@/components/BackButton'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers } from 'ethers'
@@ -14,6 +15,7 @@ import { ethers } from 'ethers'
 const CreatePayment: FC = () => {
 	const [tabValue, setTabValue] = useState<number>(0)
 	const [lockDate, setLockDate] = useState<any>()
+	const { isConnected } = useAccount()
 	const amountRef = useRef()
 	const oneRef = useRef()
 	const multiRef = useRef()
@@ -27,8 +29,9 @@ const CreatePayment: FC = () => {
 			const one = (oneRef.current as HTMLInputElement).value
 			result = [one]
 		}
-		console.log(lockDate.unix())
-		if (window.ethereum) {
+		const lockTime = lockDate.unix() * 1000 - Date.now()
+
+		if (isConnected) {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			const paymentContract = new ethers.Contract(
@@ -36,6 +39,14 @@ const CreatePayment: FC = () => {
 				paymentABI,
 				signer
 			)
+			const value = ethers.utils.parseEther(amount)
+			if (!tabValue)
+				paymentContract.createPayment(lockTime, !tabValue, result[0], ethers.constants.HashZero, {
+					value: value,
+				})
+			else {
+				//Need merkle tree logic here
+			}
 		}
 	}
 
@@ -49,7 +60,12 @@ const CreatePayment: FC = () => {
 				<input ref={amountRef} type="text" placeholder="Type here" className="input input-bordered w-full" />
 				<div className="flex text-2xl">Locked until</div>
 				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<DatePicker disablePast value={lockDate} onChange={newValue => setLockDate(newValue)} />
+					<DateTimePicker
+						disablePast
+						value={lockDate}
+						onChange={newValue => setLockDate(newValue)}
+						className="bg-white"
+					/>
 				</LocalizationProvider>
 
 				<div className="tabs w-full">
