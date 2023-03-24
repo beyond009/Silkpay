@@ -12,6 +12,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers, utils } from 'ethers'
 import { MerkleTree } from "merkletreejs";
+import fs from "fs";
 
 const createMerkleTree = (addresses) => {
 	// create leaf based on keccak256 hash
@@ -20,15 +21,27 @@ const createMerkleTree = (addresses) => {
 	// get root 
 	const root = merkletree.getHexRoot()
 
-	const proof = merkletree.getHexProof(leaf[0]);
+	const storedJSON = {}
+	for (let i = 0; i < addresses.length; i++){
+		storedJSON[addresses[i]] = {
+			leaf: leaf[i],
+			proof: merkletree.getHexProof(leaf[0])
+		}
+	}
 	console.log("Leaf:")
 	console.log(leaf)
 	console.log("\nMerkleTree:")
 	console.log(merkletree.toString())
-	console.log("\nProof:")
-	console.log(proof)
+	console.log("\nStoredJSON:", storedJSON)
 	console.log("\nRoot:")
 	console.log(root)
+
+    fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
+    if (err) {
+        console.log(err);
+    }
+});
+
 	return root
 }
 
@@ -68,6 +81,7 @@ const CreatePayment: FC = () => {
 				const merkleTreeRoot = createMerkleTree(result)
 				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
 					value: value,
+
 				})			
 			}
 		}
