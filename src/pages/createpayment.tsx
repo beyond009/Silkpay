@@ -10,7 +10,40 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
+import { MerkleTree } from "merkletreejs";
+// import * as fs from 'fs';
+
+const createMerkleTree = (addresses) => {
+	// create leaf based on keccak256 hash
+	const leaf = addresses.map(x => utils.keccak256(x))
+	const merkletree = new MerkleTree(leaf, utils.keccak256, { sortPairs: true });
+	// get root 
+	const root = merkletree.getHexRoot()
+
+	const storedJSON = {}
+	for (let i = 0; i < addresses.length; i++){
+		storedJSON[addresses[i]] = {
+			leaf: leaf[i],
+			proof: merkletree.getHexProof(leaf[i])
+		}
+	}
+	console.log("Leaf:")
+	console.log(leaf)
+	console.log("\nMerkleTree:")
+	console.log(merkletree.toString())
+	console.log("\nStoredJSON:", storedJSON)
+	console.log("\nRoot:")
+	console.log(root)
+
+    // fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
+    // if (err) {
+    //     console.log(err);
+    // }
+	// });
+
+	return root
+}
 
 const CreatePayment: FC = () => {
 	const [tabValue, setTabValue] = useState<number>(0)
@@ -45,7 +78,11 @@ const CreatePayment: FC = () => {
 					value: value,
 				})
 			else {
-				//Need merkle tree logic here
+				const merkleTreeRoot = createMerkleTree(result)
+				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
+					value: value,
+
+				})			
 			}
 		}
 	}
