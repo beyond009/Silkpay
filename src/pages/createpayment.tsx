@@ -29,6 +29,7 @@ const createMerkleTree = (addresses) => {
 	console.log(proof)
 	console.log("\nRoot:")
 	console.log(root)
+	return root
 }
 
 const CreatePayment: FC = () => {
@@ -65,7 +66,7 @@ const CreatePayment: FC = () => {
 				})
 			else {
 				const merkleTreeRoot = createMerkleTree(result)
-				paymentContract.createPayment(lockTime, tabValue, 0, merkleTreeRoot, {
+				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
 					value: value,
 				})			
 			}
