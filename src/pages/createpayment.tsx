@@ -12,7 +12,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers, utils } from 'ethers'
 import { MerkleTree } from "merkletreejs";
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 const createMerkleTree = (addresses) => {
 	// create leaf based on keccak256 hash
@@ -25,7 +25,7 @@ const createMerkleTree = (addresses) => {
 	for (let i = 0; i < addresses.length; i++){
 		storedJSON[addresses[i]] = {
 			leaf: leaf[i],
-			proof: merkletree.getHexProof(leaf[0])
+			proof: merkletree.getHexProof(leaf[i])
 		}
 	}
 	console.log("Leaf:")
@@ -36,11 +36,11 @@ const createMerkleTree = (addresses) => {
 	console.log("\nRoot:")
 	console.log(root)
 
-    fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
-    if (err) {
-        console.log(err);
-    }
-	});
+    // fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
+    // if (err) {
+    //     console.log(err);
+    // }
+	// });
 
 	return root
 }
