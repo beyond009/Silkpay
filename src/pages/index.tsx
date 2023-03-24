@@ -11,15 +11,26 @@ import Router from 'next/router'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 const Home: FC = () => {
 	const { address } = useAccount()
-	const [pay, setPay] = useState<Array<any>>()
-	const [payee, setPayee] = useState<Array<any>>()
-
+	const [payments, setPayments] = useState<Array<any>>([])
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract('0x0dc627cB3bB1319007A5500259e8A16e672d8328', paymentABI, provider)
 		const res = await paymentContract.getPaymentIDsBySender(address)
 		const res1 = await paymentContract.getPaymentIDsByRecipient(address)
-		console.log(res[1], res1[1])
+		const tPayments = []
+		res[1].forEach(async v => {
+			const res = {}
+			Object.assign(res, await paymentContract.payments(v))
+			res['id'] = Number(v)
+			tPayments.push(res)
+		})
+		res1[1].forEach(async v => {
+			const res = {}
+			Object.assign(res, await paymentContract.payments(v))
+			res['id'] = Number(v)
+			tPayments.push(res)
+		})
+		setPayments(tPayments)
 	}
 	useEffect(() => {
 		fetch()
@@ -41,18 +52,21 @@ const Home: FC = () => {
 			</div>
 			<div className="text-3xl mt-7">Related payments</div>
 			<div className="flex flex-col gap-6 mt-7 w-full">
-				<div
-					className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
-					onClick={() => {
-						Router.push('/payment')
-					}}
-				>
-					Pay to xxxx xxx ETH
-				</div>
-				<div className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl">
-					Recive xxx ETH
-				</div>
-				<div className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"></div>
+				<>
+					{payments.map((v, k) => {
+						return (
+							<div
+								key={k}
+								className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
+								onClick={() => {
+									Router.push('/payment/' + v.id)
+								}}
+							>
+								Pay to 1 ETH
+							</div>
+						)
+					})}
+				</>
 			</div>
 		</div>
 	)
