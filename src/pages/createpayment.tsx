@@ -12,7 +12,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers, utils } from 'ethers'
 import { MerkleTree } from "merkletreejs";
-import fs from "fs";
+import * as fs from 'fs';
 
 const createMerkleTree = (addresses) => {
 	// create leaf based on keccak256 hash
@@ -40,7 +40,7 @@ const createMerkleTree = (addresses) => {
     if (err) {
         console.log(err);
     }
-});
+	});
 
 	return root
 }
