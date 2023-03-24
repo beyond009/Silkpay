@@ -1,13 +1,29 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { APP_NAME } from '@/lib/consts'
 import ConnectWallet from '@/components/ConnectWallet'
 import { Header } from '@/components/Header'
 import { BookOpenIcon, CodeIcon, ShareIcon, PlusIcon } from '@heroicons/react/outline'
+import { ethers } from 'ethers'
+import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import { useAccount } from 'wagmi'
 import Link from 'next/link'
 import Router from 'next/router'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
-
 const Home: FC = () => {
+	const { address } = useAccount()
+	const [pay, setPay] = useState<Array<any>>()
+	const [payee, setPayee] = useState<Array<any>>()
+
+	const fetch = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const paymentContract = new ethers.Contract('0x0dc627cB3bB1319007A5500259e8A16e672d8328', paymentABI, provider)
+		const res = await paymentContract.getPaymentIDsBySender(address)
+		const res1 = await paymentContract.getPaymentIDsByRecipient(address)
+		console.log(res[1], res1[1])
+	}
+	useEffect(() => {
+		fetch()
+	}, [address])
 	return (
 		<div className="max-w-6xl flex flex-col items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
 			<div className="cards w-full flex gap-8 ">
