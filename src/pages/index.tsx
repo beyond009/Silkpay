@@ -9,10 +9,17 @@ import { useAccount } from 'wagmi'
 import Link from 'next/link'
 import Router from 'next/router'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
+enum PaymnetStatus {
+	Locking, //锁定期
+	Appealing, //During arbitration 仲裁中
+	Executed, //在申诉期，存在申诉，申诉被裁决及执行完成
+	Paid, // 没有仲裁时，正常支付完成
+	ReFund, //没有仲裁，资金退回支付方
+}
 const Home: FC = () => {
 	const { address } = useAccount()
 	const [payments, setPayments] = useState<Array<any>>([])
-	const desensitizationAddress = (info: string, len = 3) => {
+	const desensitizationAddress = (info: string, len = 5) => {
 		return info.substring(0, len) + '...' + info.substring(info.length - len, info.length)
 	}
 	const fetch = async () => {
@@ -34,6 +41,7 @@ const Home: FC = () => {
 			tPayments.push(tmp)
 		}
 		setPayments(tPayments)
+		console.log(tPayments)
 	}
 	useEffect(() => {
 		fetch()
@@ -59,12 +67,18 @@ const Home: FC = () => {
 					return (
 						<div
 							key={k}
-							className="flex items-center  rounded-[15px] w-full h-12 px-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
+							className="flex items-center gap-4 relative rounded-[15px] w-full h-12 px-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
 							onClick={() => {
 								Router.push('/payment/' + v.id)
 							}}
 						>
-							{desensitizationAddress(v.sender)}
+							<div className="badge badge-primary badge-outline">{desensitizationAddress(v.sender)}</div>
+							pay to{' '}
+							<div className="badge badge-secondary badge-outline">
+								{v.targeted ? desensitizationAddress(v.recipient) : 'whitelist'}
+							</div>
+							{ethers.utils.formatEther(v.amount)} ETH
+							<div className="badge absolute right-8">{PaymnetStatus[v.status]}</div>
 						</div>
 					)
 				})}
