@@ -12,7 +12,7 @@ import { PaymnetStatus } from '..'
 
 const Payment: FC = () => {
 	const router = useRouter()
-	const [payment, setPayment] = useState<any>(null)
+	const [payment, setPayment] = useState<any>(undefined)
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -34,7 +34,7 @@ const Payment: FC = () => {
 	}
 	useEffect(() => {
 		fetch()
-	}, [])
+	}, [id])
 	return (
 		<div className="flex flex-col w-full h-full items-start justify-start max-w-6xl sm:pt-0">
 			<div className="flex">
@@ -55,7 +55,7 @@ const Payment: FC = () => {
 					</div>
 					<div className="stat-title">Total amount</div>
 					<div className="stat-value text-primary">
-						{payment ? ethers.utils.formatEther(payment.amount) : '0'}ETH
+						{payment && ethers.utils.formatEther(payment['amount'])}ETH
 					</div>
 					{/* <div className="stat-desc">desc</div> */}
 				</div>
@@ -66,6 +66,7 @@ const Payment: FC = () => {
 					</div>
 					<div className="stat-title">Locking Time</div>
 					<div className="stat-value text-secondary">
+						{/* {console.log(payment)} */}
 						{payment ? formateTime(payment.lockTime.toNumber()) : ''}
 					</div>
 					{/* <div className="stat-desc">21% more than last month</div> */}
@@ -88,14 +89,8 @@ const Payment: FC = () => {
 				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
 			</div>
 			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
-				<div className="text-xl">Recipients whitelist</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="text-xl">{payment?.targeted ? 'Recipient' : 'Recipients whitelist'}</div>
+				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
 			<button className="btn btn-info gap-2 mt-12 mb-36" onClick={() => {}}>
 				Claim
