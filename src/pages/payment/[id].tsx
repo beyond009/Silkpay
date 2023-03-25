@@ -9,17 +9,23 @@ import { useRouter } from 'next/router'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
 import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
+import { useAccount } from 'wagmi'
 
 const Payment: FC = () => {
 	const router = useRouter()
+	const { address } = useAccount()
 	const [payment, setPayment] = useState<any>(undefined)
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
 		const res = await paymentContract.payments(Number(id))
-		console.log(res)
 		setPayment(res)
+	}
+	const handlePay = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
+		await paymentContract.pay(Number(id))
 	}
 	const formatDate = (start: number, lock: number) => {
 		console.log(start, lock, start + lock)
@@ -90,9 +96,13 @@ const Payment: FC = () => {
 				<div className="text-xl">{payment?.targeted ? 'Recipient' : 'Recipients whitelist'}</div>
 				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
-			<button className="btn btn-info gap-2 mt-12 mb-36" onClick={() => {}}>
-				Pay
-			</button>
+			{address === payment?.sender ? (
+				<button className="btn btn-info gap-2 mt-12 mb-36" onClick={() => {}}>
+					Pay
+				</button>
+			) : (
+				''
+			)}
 		</div>
 	)
 }

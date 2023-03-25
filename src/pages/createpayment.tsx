@@ -81,7 +81,7 @@ const CreatePayment: FC = () => {
 				const merkleTreeRoot = createMerkleTree(result)
 				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
 					value: value,
-					gasLimit: 30000000,
+					gasLimit: 3000000,
 				})
 			}
 		}
