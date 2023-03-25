@@ -25,19 +25,19 @@ const Home: FC = () => {
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract('0x0dc627cB3bB1319007A5500259e8A16e672d8328', paymentABI, provider)
-		const res = await paymentContract.getPaymentIDsBySender(address)
-		const res1 = await paymentContract.getPaymentIDsByRecipient(address)
+		const senderPayment = await paymentContract.getPaymentIDsBySender(address)
+		const recipientPayment = await paymentContract.getPaymentIDsByRecipient(address)
 		const tPayments = []
-		for (let i = 0; i < res[1].length; i++) {
+		for (let i = 0; i < senderPayment[1].length; i++) {
 			const tmp = {}
-			Object.assign(tmp, await paymentContract.payments(res[1][i]))
-			tmp['id'] = res[1][i].toNumber()
+			Object.assign(tmp, await paymentContract.payments(senderPayment[1][i]))
+			tmp['id'] = senderPayment[1][i].toNumber()
 			tPayments.push(tmp)
 		}
-		for (let i = 0; i < res1[1].length; i++) {
+		for (let i = 0; i < recipientPayment[1].length; i++) {
 			const tmp = {}
-			Object.assign(tmp, await paymentContract.payments(res1[1][i]))
-			tmp['id'] = res1[1][i]
+			Object.assign(tmp, await paymentContract.payments(senderPayment[1][i]))
+			tmp['id'] = recipientPayment[1][i]
 			tPayments.push(tmp)
 		}
 		setPayments(tPayments)
