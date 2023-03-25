@@ -25,7 +25,6 @@ const Payment: FC = () => {
 		console.log(start, lock, start + lock)
 		return new Date((start + lock / 1000) * 1000)
 	}
-
 	const formateTime = (unix: number) => {
 		const days = unix / 1000 / 60 / 60 / 24
 		const hours = unix / 1000 / 60 / 60
@@ -71,7 +70,6 @@ const Payment: FC = () => {
 					</div>
 					{/* <div className="stat-desc">21% more than last month</div> */}
 				</div>
-
 				<div className="stat">
 					<div className="stat-figure text-secondary"></div>
 					<div className="stat-value">{payment ? PaymnetStatus[payment.status] : 'Locking'}</div>
@@ -86,14 +84,14 @@ const Payment: FC = () => {
 			</div>
 			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
 				<div className="text-xl">Payer</div>
-				<div className="">0xAa8b29773D87b22987B4D0BC4a72D5e9452Dd93D</div>
+				<div className="">{payment?.sender}</div>
 			</div>
 			<div className="mt-12 rounded-lg bg-gray-50 flex flex-col p-6">
 				<div className="text-xl">{payment?.targeted ? 'Recipient' : 'Recipients whitelist'}</div>
 				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
 			<button className="btn btn-info gap-2 mt-12 mb-36" onClick={() => {}}>
-				Claim
+				Pay
 			</button>
 		</div>
 	)
