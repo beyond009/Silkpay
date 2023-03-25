@@ -73,16 +73,24 @@ const CreatePayment: FC = () => {
 				signer
 			)
 			const value = ethers.utils.parseEther(amount)
+			console.log(tabValue)
 			if (!tabValue)
-				paymentContract.createPayment(lockTime, !tabValue, result[0], ethers.constants.HashZero, {
+				paymentContract.createPayment(10, true, result[0], ethers.constants.HashZero, {
 					value: value,
 				})
 			else {
 				const merkleTreeRoot = createMerkleTree(result)
-				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
-					value: value,
-					gasLimit: 3000000,
-				})
+				console.log(Math.floor(lockTime / 1000))
+				paymentContract.createPayment(
+					Math.floor(lockTime / 1000),
+					false,
+					ethers.constants.AddressZero,
+					merkleTreeRoot,
+					{
+						value: value,
+						gasLimit: 153207,
+					}
+				)
 			}
 		}
 	}
