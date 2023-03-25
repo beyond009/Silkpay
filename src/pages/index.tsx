@@ -9,7 +9,7 @@ import { useAccount } from 'wagmi'
 import Link from 'next/link'
 import Router from 'next/router'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
-enum PaymnetStatus {
+export enum PaymnetStatus {
 	Locking, //锁定期
 	Appealing, //During arbitration 仲裁中
 	Executed, //在申诉期，存在申诉，申诉被裁决及执行完成
@@ -67,7 +67,7 @@ const Home: FC = () => {
 					return (
 						<div
 							key={k}
-							className="flex items-center gap-4 relative rounded-[15px] w-full h-12 px-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
+							className="flex items-center gap-4 relative rounded-[15px] w-full h-16 px-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
 							onClick={() => {
 								Router.push('/payment/' + v.id)
 							}}
