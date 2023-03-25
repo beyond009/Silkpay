@@ -12,24 +12,27 @@ import ThemeSwitcher from '@/components/ThemeSwitcher'
 const Home: FC = () => {
 	const { address } = useAccount()
 	const [payments, setPayments] = useState<Array<any>>([])
+	const desensitizationAddress = (info: string, len = 3) => {
+		return info.substring(0, len) + '...' + info.substring(info.length - len, info.length)
+	}
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract('0x0dc627cB3bB1319007A5500259e8A16e672d8328', paymentABI, provider)
 		const res = await paymentContract.getPaymentIDsBySender(address)
 		const res1 = await paymentContract.getPaymentIDsByRecipient(address)
 		const tPayments = []
-		res[1].forEach(async v => {
-			const res = {}
-			Object.assign(res, await paymentContract.payments(v))
-			res['id'] = Number(v)
-			tPayments.push(res)
-		})
-		res1[1].forEach(async v => {
-			const res = {}
-			Object.assign(res, await paymentContract.payments(v))
-			res['id'] = Number(v)
-			tPayments.push(res)
-		})
+		for (let i = 0; i < res[1].length; i++) {
+			const tmp = {}
+			Object.assign(tmp, await paymentContract.payments(res[1][i]))
+			tmp['id'] = res[1][i].toNumber()
+			tPayments.push(tmp)
+		}
+		for (let i = 0; i < res1[1].length; i++) {
+			const tmp = {}
+			Object.assign(tmp, await paymentContract.payments(res1[1][i]))
+			tmp['id'] = res1[1][i]
+			tPayments.push(tmp)
+		}
 		setPayments(tPayments)
 	}
 	useEffect(() => {
@@ -52,21 +55,19 @@ const Home: FC = () => {
 			</div>
 			<div className="text-3xl mt-7">Related payments</div>
 			<div className="flex flex-col gap-6 mt-7 w-full">
-				<>
-					{payments.map((v, k) => {
-						return (
-							<div
-								key={k}
-								className="flex items-center justify-center rounded-[15px] w-full h-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
-								onClick={() => {
-									Router.push('/payment/' + v.id)
-								}}
-							>
-								Pay to 1 ETH
-							</div>
-						)
-					})}
-				</>
+				{payments.map((v, k) => {
+					return (
+						<div
+							key={k}
+							className="flex items-center  rounded-[15px] w-full h-12 px-12 shadow-sm bg-gray-50 dark:bg-slate-600 hover:shadow-xl cursor-pointer text-xl"
+							onClick={() => {
+								Router.push('/payment/' + v.id)
+							}}
+						>
+							{desensitizationAddress(v.sender)}
+						</div>
+					)
+				})}
 			</div>
 		</div>
 	)
