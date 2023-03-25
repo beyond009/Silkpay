@@ -150,7 +150,7 @@ const Payment: FC = () => {
 							hanldeCreateDispute()
 						}}
 					>
-						Start a dipute
+						Start Dispute
 					</button>
 				) : (
 					''

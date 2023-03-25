@@ -6,15 +6,14 @@ import { BookOpenIcon, CodeIcon, ShareIcon, PlusIcon } from '@heroicons/react/ou
 import { ethers } from 'ethers'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
 import { useAccount } from 'wagmi'
-import Link from 'next/link'
 import Router from 'next/router'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
+
 export enum PaymnetStatus {
 	Locking, //锁定期
 	Appealing, //During arbitration 仲裁中
 	Executed, //在申诉期，存在申诉，申诉被裁决及执行完成
 	Paid, // 没有仲裁时，正常支付完成
-	ReFund, //没有仲裁，资金退回支付方
+	Refund, //没有仲裁，资金退回支付方
 }
 const Home: FC = () => {
 	const { address } = useAccount()

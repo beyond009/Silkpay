@@ -128,7 +128,7 @@ const CreatePayment: FC = () => {
 							setTabValue(1)
 						}}
 					>
-						Multiple potential recipients
+						Multiple Recipients
 					</a>
 				</div>
 				{!tabValue ? (
@@ -143,7 +143,7 @@ const CreatePayment: FC = () => {
 					</>
 				) : (
 					<>
-						<div className="flex text-2xl">Recipients</div>
+						<div className="flex text-2xl">Recipient</div>
 						<textarea
 							ref={multiRef}
 							placeholder="Please enter each address in a new line followed by a separator (comma,colon or blank space)"
