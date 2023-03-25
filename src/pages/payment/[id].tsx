@@ -16,7 +16,7 @@ const Payment: FC = () => {
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract('0x0dc627cB3bB1319007A5500259e8A16e672d8328', paymentABI, provider)
+		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
 		const res = await paymentContract.payments(Number(id))
 		console.log(res)
 		setPayment(res)

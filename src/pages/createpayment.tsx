@@ -11,35 +11,35 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useAccount } from 'wagmi'
 import { ethers, utils } from 'ethers'
-import { MerkleTree } from "merkletreejs";
+import { MerkleTree } from 'merkletreejs'
 // import * as fs from 'fs';
 
-const createMerkleTree = (addresses) => {
+const createMerkleTree = addresses => {
 	// create leaf based on keccak256 hash
 	const leaf = addresses.map(x => utils.keccak256(x))
-	const merkletree = new MerkleTree(leaf, utils.keccak256, { sortPairs: true });
-	// get root 
+	const merkletree = new MerkleTree(leaf, utils.keccak256, { sortPairs: true })
+	// get root
 	const root = merkletree.getHexRoot()
 
 	const storedJSON = {}
-	for (let i = 0; i < addresses.length; i++){
+	for (let i = 0; i < addresses.length; i++) {
 		storedJSON[addresses[i]] = {
 			leaf: leaf[i],
-			proof: merkletree.getHexProof(leaf[i])
+			proof: merkletree.getHexProof(leaf[i]),
 		}
 	}
-	console.log("Leaf:")
+	console.log('Leaf:')
 	console.log(leaf)
-	console.log("\nMerkleTree:")
+	console.log('\nMerkleTree:')
 	console.log(merkletree.toString())
-	console.log("\nStoredJSON:", storedJSON)
-	console.log("\nRoot:")
+	console.log('\nStoredJSON:', storedJSON)
+	console.log('\nRoot:')
 	console.log(root)
 
-    // fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
-    // if (err) {
-    //     console.log(err);
-    // }
+	// fs.writeFile("whiteList.txt", JSON.stringify(storedJSON), function(err) {
+	// if (err) {
+	//     console.log(err);
+	// }
 	// });
 
 	return root
@@ -68,7 +68,7 @@ const CreatePayment: FC = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			const paymentContract = new ethers.Contract(
-				'0x0dc627cB3bB1319007A5500259e8A16e672d8328',
+				'0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4',
 				paymentABI,
 				signer
 			)
@@ -81,8 +81,8 @@ const CreatePayment: FC = () => {
 				const merkleTreeRoot = createMerkleTree(result)
 				paymentContract.createPayment(lockTime, tabValue, ethers.constants.AddressZero, merkleTreeRoot, {
 					value: value,
-
-				})			
+					gasLimit: 30000000,
+				})
 			}
 		}
 	}
