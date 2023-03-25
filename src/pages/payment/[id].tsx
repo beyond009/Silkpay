@@ -7,6 +7,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import { abi as arbitratorABI } from '@/abi/SilkArbitrator.json'
 import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
 import { useAccount } from 'wagmi'
@@ -16,13 +17,24 @@ const Payment: FC = () => {
 	const router = useRouter()
 	const { address } = useAccount()
 	const [payment, setPayment] = useState<any>(undefined)
+	const [disputeId, setDisputeId] = useState<number | undefined>()
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
-		console.log(res)
+		if (res.status === PaymnetStatus.Appealing) {
+			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
+			setDisputeId(disputeId.toNumber())
+			const arbitratorContract = new ethers.Contract(
+				'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+				arbitratorABI,
+				provider
+			)
+			const dispute = await arbitratorContract.disputes(disputeId)
+			console.log(dispute)
+		}
 	}
 	const handlePay = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -119,7 +131,7 @@ const Payment: FC = () => {
 				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
 			<div className="flex gap-6 mt-12 mb-36">
-				{address === payment?.sender ? (
+				{address === payment?.sender && PaymnetStatus[payment.status] === 'Locking' ? (
 					<button
 						className="btn btn-info gap-2  w-40"
 						onClick={() => {
