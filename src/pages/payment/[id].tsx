@@ -44,6 +44,7 @@ const Payment: FC = () => {
 	const [payment, setPayment] = useState<any>(undefined)
 	const [disputeId, setDisputeId] = useState<number | undefined>()
 	const [dispute, setDispute] = useState<any>()
+	const [vote, setVote] = useState<any>()
 	const [open, setOpen] = useState(false)
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
@@ -66,7 +67,7 @@ const Payment: FC = () => {
 			setDispute(dispute)
 		}
 	}
-	const handleCommiVote = async () => {
+	const handleCommitVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
@@ -74,6 +75,13 @@ const Payment: FC = () => {
 			arbitratorABI,
 			signer
 		)
+		let voteNumber = 0
+		if (vote === 'Recipient win') voteNumber = 1
+		const salt = ethers.utils.randomBytes(30)
+		const abiCoder = new ethers.utils.AbiCoder()
+		const res = abiCoder.encode(['uint', 'bytes'], [voteNumber, salt])
+		const commit = ethers.utils.keccak256(res)
+		arbitratorContract.commit(Number(disputeId), commit)
 	}
 	const handleNextPeriod = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -263,7 +271,12 @@ const Payment: FC = () => {
 						<Typography id="modal-modal-title" variant="h6" component="h2">
 							Commit vote
 						</Typography>
-						<select className="select select-info w-full max-w-xs m-12">
+						<select
+							className="select select-info w-full max-w-xs m-12"
+							onChange={e => {
+								setVote(e.target.value)
+							}}
+						>
 							<option disabled selected>
 								Select vote
 							</option>
@@ -273,7 +286,7 @@ const Payment: FC = () => {
 						<button
 							className="btn btn-info gap-2  w-24 mt-12"
 							onClick={() => {
-								handleCommiVote()
+								handleCommitVote()
 							}}
 						>
 							Submit
