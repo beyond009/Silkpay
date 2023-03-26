@@ -72,10 +72,11 @@ const Home: FC = () => {
 							}}
 						>
 							<div className="badge badge-primary badge-outline">{desensitizationAddress(v.sender)}</div>
-							pay to{' '}
+							pay to
 							<div className="badge badge-secondary badge-outline">
 								{v.targeted ? desensitizationAddress(v.recipient) : 'whitelist'}
 							</div>
+							<div>{Number(v.id)}</div>
 							{ethers.utils.formatEther(v.amount)} ETH
 							<div className="badge absolute right-8">{PaymnetStatus[v.status]}</div>
 						</div>

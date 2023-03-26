@@ -55,14 +55,15 @@ const Payment: FC = () => {
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
-			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
-			setDisputeId(disputeId.toNumber())
+			const disputeId = await paymentContract.disputeIDtoPaymentId(Number(id))
+			console.log(disputeId.toNumber(), Number(id), 'dispute')
+			setDisputeId(6)
 			const arbitratorContract = new ethers.Contract(
 				'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
 				arbitratorABI,
 				provider
 			)
-			const dispute = await arbitratorContract.disputes(disputeId)
+			const dispute = await arbitratorContract.disputes(6)
 			console.log(dispute)
 			setDispute(dispute)
 		}
@@ -268,14 +269,16 @@ const Payment: FC = () => {
 							Sumbit Evidence
 						</button>
 					)}
-				<button
-					className="btn btn-info gap-2  w-40"
-					onClick={() => {
-						handleNextPeriod()
-					}}
-				>
-					Next period
-				</button>
+				{payment?.status === PaymnetStatus.Appealing && (
+					<button
+						className="btn btn-info gap-2  w-40"
+						onClick={() => {
+							handleNextPeriod()
+						}}
+					>
+						Next period
+					</button>
+				)}
 			</div>
 			<div className="mb-36"></div>
 			<Modal
