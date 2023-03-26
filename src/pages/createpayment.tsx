@@ -14,7 +14,7 @@ import { ethers, utils } from 'ethers'
 import { MerkleTree } from 'merkletreejs'
 // import * as fs from 'fs';
 
-export let merkletree;
+export let merkletree
 const createMerkleTree = addresses => {
 	// create leaf based on keccak256 hash
 	const leaf = addresses.map(x => utils.keccak256(x))
@@ -69,7 +69,7 @@ const CreatePayment: FC = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			const paymentContract = new ethers.Contract(
-				'0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4',
+				'0x4B62466d0A6cC59c65b6C93917AD9D30de259266',
 				paymentABI,
 				signer
 			)

@@ -51,19 +51,19 @@ const Payment: FC = () => {
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
+		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, provider)
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
 			const disputeId = await paymentContract.disputeIDtoPaymentId(Number(id))
 			console.log(disputeId.toNumber(), Number(id), 'dispute')
-			setDisputeId(6)
+			setDisputeId(disputeId)
 			const arbitratorContract = new ethers.Contract(
-				'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+				'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
 				arbitratorABI,
 				provider
 			)
-			const dispute = await arbitratorContract.disputes(6)
+			const dispute = await arbitratorContract.disputes(Number(disputeId))
 			console.log(dispute)
 			setDispute(dispute)
 		}
@@ -72,7 +72,7 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
 			arbitratorABI,
 			signer
 		)
@@ -81,15 +81,16 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
 			arbitratorABI,
 			signer
 		)
 		let voteNumber = 0
 		if (vote === 'Recipient win') voteNumber = 1
-		const salt = ethers.utils.randomBytes(30)
+		// const salt = ethers.utils.randomBytes(30)
+		const salt = 12345678
 		const abiCoder = new ethers.utils.AbiCoder()
-		const res = abiCoder.encode(['uint', 'bytes'], [voteNumber, salt])
+		const res = abiCoder.encode(['uint', 'unit'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
 		arbitratorContract.commit(Number(disputeId), commit)
 	}
@@ -97,7 +98,7 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
 			arbitratorABI,
 			signer
 		)
@@ -107,7 +108,7 @@ const Payment: FC = () => {
 	const handleSubmitEvidence = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, signer)
+		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
 		if (payment?.sender === address) {
 			paymentContract.submitEvidenceBySender(Number(id), '')
 		}
@@ -119,13 +120,13 @@ const Payment: FC = () => {
 	const handlePay = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, signer)
+		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
 		await paymentContract.pay(Number(id))
 	}
 	const hanldeCreateDispute = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, signer)
+		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
 		await paymentContract.raiseDisputeByRecipient(Number(id), { value: payment?.amount.div(10) })
 	}
 	const formatDate = (start: number, lock: number) => {

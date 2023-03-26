@@ -23,7 +23,7 @@ const Home: FC = () => {
 	}
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, provider)
+		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, provider)
 		const senderPayment = await paymentContract.getPaymentIDsBySender(address)
 		const recipientPayment = await paymentContract.getPaymentIDsByRecipient(address)
 		const tPayments = []
