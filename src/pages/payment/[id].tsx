@@ -56,7 +56,6 @@ const Payment: FC = () => {
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
 			const disputeId = await paymentContract.disputeIDtoPaymentId(Number(id))
-			console.log(disputeId.toNumber(), Number(id), 'dispute')
 			setDisputeId(disputeId)
 			const arbitratorContract = new ethers.Contract(
 				'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
@@ -76,6 +75,7 @@ const Payment: FC = () => {
 			arbitratorABI,
 			signer
 		)
+		await arbitratorContract.castVote(Number(disputeId), 0, 12345678)
 	}
 	const handleCommitVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -92,8 +92,10 @@ const Payment: FC = () => {
 		const abiCoder = new ethers.utils.AbiCoder()
 		const res = abiCoder.encode(['uint', 'unit'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
-		arbitratorContract.commit(Number(disputeId), commit)
+		const voteId = await arbitratorContract.commit(Number(disputeId), commit)
+		console.log(voteId)
 	}
+
 	const handleNextPeriod = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
@@ -123,11 +125,11 @@ const Payment: FC = () => {
 		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
 		await paymentContract.pay(Number(id))
 	}
-	const hanldeCreateDispute = async () => {
+	const handleCreateDispute = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
-		await paymentContract.raiseDisputeByRecipient(Number(id), { value: payment?.amount.div(10) })
+		await paymentContract.raiseDisputeByRecipient(Number(id), { value: payment?.amount })
 	}
 	const formatDate = (start: number, lock: number) => {
 		console.log(start, lock, start + lock)
@@ -143,7 +145,7 @@ const Payment: FC = () => {
 		if (payment) {
 			if (
 				Date.now() / 1000 > payment?.startTime.toNumber() + payment?.lockTime.toNumber() &&
-				Date.now() / 1000 < payment?.startTime.toNumber() + payment?.lockTime.toNumber() + 600
+				Date.now() / 1000 < payment?.startTime.toNumber() + payment?.lockTime.toNumber() + 300
 			)
 				return true
 		}
@@ -228,7 +230,7 @@ const Payment: FC = () => {
 					<button
 						className="btn btn-info gap-2  w-40"
 						onClick={() => {
-							hanldeCreateDispute()
+							handleCreateDispute()
 						}}
 					>
 						Start Dispute
@@ -241,7 +243,7 @@ const Payment: FC = () => {
 				<>
 					<div className="text-2xl mt-12 mb-6">Dispute</div>
 					<div className="flex flex-col mb-12 gap-4">
-						<div className="text-xl">Dispute id: {disputeId}</div>
+						<div className="text-xl">Dispute id: {Number(disputeId)}</div>
 						<div className="text-xl">
 							Period: <div className="badge"> {Period[dispute?.period]}</div>
 						</div>
@@ -251,7 +253,7 @@ const Payment: FC = () => {
 			<div className="flex gap-6 mt-12">
 				{dispute?.period === Period.vote && (
 					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
-						Commit vVte
+						Cast Vote
 					</button>
 				)}
 				{dispute?.period === Period.commit && (
