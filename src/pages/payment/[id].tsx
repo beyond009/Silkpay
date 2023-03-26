@@ -67,6 +67,15 @@ const Payment: FC = () => {
 			setDispute(dispute)
 		}
 	}
+	const hanldeCastVote = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const arbitratorContract = new ethers.Contract(
+			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			arbitratorABI,
+			signer
+		)
+	}
 	const handleCommitVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
@@ -226,14 +235,23 @@ const Payment: FC = () => {
 					''
 				)}
 			</div>
-			<div className="text-2xl mt-12 mb-6">Dispute</div>
-			<div className="flex flex-col mb-12 gap-4">
-				<div className="text-xl">Dispute id: {disputeId}</div>
-				<div className="text-xl">
-					Period: <div className="badge"> {Period[dispute?.period]}</div>
-				</div>
-			</div>
+			{payment?.status === PaymnetStatus.Appealing && (
+				<>
+					<div className="text-2xl mt-12 mb-6">Dispute</div>
+					<div className="flex flex-col mb-12 gap-4">
+						<div className="text-xl">Dispute id: {disputeId}</div>
+						<div className="text-xl">
+							Period: <div className="badge"> {Period[dispute?.period]}</div>
+						</div>
+					</div>
+				</>
+			)}
 			<div className="flex gap-6 mt-12">
+				{dispute?.period === Period.vote && (
+					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
+						Commit vote
+					</button>
+				)}
 				{dispute?.period === Period.commit && (
 					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
 						Commit vote
