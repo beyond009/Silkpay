@@ -217,7 +217,7 @@ const Payment: FC = () => {
 							handlePay()
 						}}
 					>
-						Pay
+						Make Payment
 					</button>
 				) : (
 					''
@@ -249,12 +249,12 @@ const Payment: FC = () => {
 			<div className="flex gap-6 mt-12">
 				{dispute?.period === Period.vote && (
 					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
-						Commit vote
+						Commit vVte
 					</button>
 				)}
 				{dispute?.period === Period.commit && (
 					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
-						Commit vote
+						Commit Vote
 					</button>
 				)}
 				{dispute?.period === Period.evidence &&
@@ -274,7 +274,7 @@ const Payment: FC = () => {
 						handleNextPeriod()
 					}}
 				>
-					Next period
+					Next Period
 				</button>
 			</div>
 			<div className="mb-36"></div>
@@ -287,7 +287,7 @@ const Payment: FC = () => {
 				{dispute?.period === Period.commit ? (
 					<Box sx={style}>
 						<Typography id="modal-modal-title" variant="h6" component="h2">
-							Commit vote
+							Commit Vote
 						</Typography>
 						<select
 							className="select select-info w-full max-w-xs m-12"
@@ -296,10 +296,10 @@ const Payment: FC = () => {
 							}}
 						>
 							<option disabled selected>
-								Select vote
+								Select Vote
 							</option>
-							<option>Payer win</option>
-							<option>Recipient win</option>
+							<option>Vote for Sender</option>
+							<option>Vote for Recipient</option>
 						</select>
 						<button
 							className="btn btn-info gap-2  w-24 mt-12"
@@ -313,7 +313,7 @@ const Payment: FC = () => {
 				) : (
 					<Box sx={style}>
 						<Typography id="modal-modal-title" variant="h6" component="h2">
-							Upload evidence
+							Upload Evidence
 						</Typography>
 
 						<input
