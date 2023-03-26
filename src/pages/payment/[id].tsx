@@ -55,7 +55,7 @@ const Payment: FC = () => {
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
-			const disputeId = await paymentContract.disputeIDtoPaymentId(Number(id))
+			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
 			setDisputeId(disputeId)
 			const arbitratorContract = new ethers.Contract(
 				'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
@@ -76,7 +76,10 @@ const Payment: FC = () => {
 			arbitratorABI,
 			signer
 		)
-		await arbitratorContract.castVote(Number(disputeId), 0, 12345678)
+		const voteId = localStorage.getItem(address + 'id')
+		const voteNumber = localStorage.getItem(address + 'choice')
+		const salt = localStorage.getItem(address + 'salt')
+		await arbitratorContract.castVote(Number(disputeId), Number(voteId), salt)
 	}
 
 	const handleCommitVote = async () => {
@@ -90,12 +93,15 @@ const Payment: FC = () => {
 		let voteNumber = 0
 		if (vote === 'Recipient win') voteNumber = 1
 		// const salt = ethers.utils.randomBytes(30)
-		const salt = 12345678
+		const salt = Math.floor(Math.random())
 		const abiCoder = new ethers.utils.AbiCoder()
 		const res = abiCoder.encode(['int', 'int'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
 		const voteId = await arbitratorContract.commit(Number(disputeId), commit)
 		console.log(voteId)
+		localStorage.setItem(address + 'id', voteId.toString())
+		localStorage.setItem(address + 'choice', voteNumber.toString())
+		localStorage.setItem(address + 'salt', salt.toString())
 	}
 
 	const handleNextPeriod = async () => {
