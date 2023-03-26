@@ -11,13 +11,43 @@ import { abi as arbitratorABI } from '@/abi/SilkArbitrator.json'
 import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
 import { useAccount } from 'wagmi'
-import handler from '../api/hello'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Modal from '@mui/material/Modal'
+
+const style = {
+	position: 'absolute' as 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 600,
+	display: 'flex',
+	flexDirection: 'column',
+	jusitifyContent: 'center',
+	alignItems: 'center',
+	bgcolor: 'background.paper',
+	boxShadow: 24,
+	p: 4,
+}
+
+enum Period {
+	evidence, // Evidence can be submitted. This is also when drawing has to take place.
+	commit, // Jurors commit a hashed vote. This is skipped for courts without hidden votes.
+	vote, // Jurors reveal/cast their vote depending on whether the court has hidden votes or not.
+	execution, // Tokens are redistributed and the ruling is executed.
+}
 
 const Payment: FC = () => {
 	const router = useRouter()
 	const { address } = useAccount()
 	const [payment, setPayment] = useState<any>(undefined)
 	const [disputeId, setDisputeId] = useState<number | undefined>()
+	const [dispute, setDispute] = useState<any>()
+	const [vote, setVote] = useState<any>()
+	const [open, setOpen] = useState(false)
+	const handleOpen = () => setOpen(true)
+	const handleClose = () => setOpen(false)
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -34,7 +64,56 @@ const Payment: FC = () => {
 			)
 			const dispute = await arbitratorContract.disputes(disputeId)
 			console.log(dispute)
+			setDispute(dispute)
 		}
+	}
+	const hanldeCastVote = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const arbitratorContract = new ethers.Contract(
+			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			arbitratorABI,
+			signer
+		)
+	}
+	const handleCommitVote = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const arbitratorContract = new ethers.Contract(
+			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			arbitratorABI,
+			signer
+		)
+		let voteNumber = 0
+		if (vote === 'Recipient win') voteNumber = 1
+		const salt = ethers.utils.randomBytes(30)
+		const abiCoder = new ethers.utils.AbiCoder()
+		const res = abiCoder.encode(['uint', 'bytes'], [voteNumber, salt])
+		const commit = ethers.utils.keccak256(res)
+		arbitratorContract.commit(Number(disputeId), commit)
+	}
+	const handleNextPeriod = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const arbitratorContract = new ethers.Contract(
+			'0x5E62274484F958D0205E214dF5CBDb19964Ed5B3',
+			arbitratorABI,
+			signer
+		)
+		await arbitratorContract.passPeriod(Number(disputeId))
+		fetch()
+	}
+	const handleSubmitEvidence = () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const paymentContract = new ethers.Contract('0xdcb76B4C1C03c26A9f25409e73aA1969eE1800A4', paymentABI, signer)
+		if (payment?.sender === address) {
+			paymentContract.submitEvidenceBySender(Number(id), '')
+		}
+		if (payment?.recipient === address) {
+			paymentContract.submitEvidenceByRecipient(Number(id), '')
+		}
+		handleClose()
 	}
 	const handlePay = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -111,7 +190,7 @@ const Payment: FC = () => {
 				<div className="stat">
 					<div className="stat-figure text-secondary"></div>
 					<div className="stat-value">
-						{isGracePeriod ? 'Grace period' : payment ? PaymnetStatus[payment.status] : 'Locking'}
+						{isGracePeriod ? 'Grace period' : payment ? PaymnetStatus[payment?.status] : 'Locking'}
 					</div>
 					<div className="stat-title">Current status</div>
 					<div className="stat-desc text-secondary">
@@ -130,8 +209,8 @@ const Payment: FC = () => {
 				<div className="text-xl">{payment?.targeted ? 'Recipient' : 'Recipients whitelist'}</div>
 				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
-			<div className="flex gap-6 mt-12 mb-36">
-				{address === payment?.sender && PaymnetStatus[payment.status] === 'Locking' ? (
+			<div className="flex gap-6 mt-12">
+				{address === payment?.sender && PaymnetStatus[payment?.status] === 'Locking' ? (
 					<button
 						className="btn btn-info gap-2  w-40"
 						onClick={() => {
@@ -156,6 +235,102 @@ const Payment: FC = () => {
 					''
 				)}
 			</div>
+			{payment?.status === PaymnetStatus.Appealing && (
+				<>
+					<div className="text-2xl mt-12 mb-6">Dispute</div>
+					<div className="flex flex-col mb-12 gap-4">
+						<div className="text-xl">Dispute id: {disputeId}</div>
+						<div className="text-xl">
+							Period: <div className="badge"> {Period[dispute?.period]}</div>
+						</div>
+					</div>
+				</>
+			)}
+			<div className="flex gap-6 mt-12">
+				{dispute?.period === Period.vote && (
+					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
+						Commit vote
+					</button>
+				)}
+				{dispute?.period === Period.commit && (
+					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
+						Commit vote
+					</button>
+				)}
+				{dispute?.period === Period.evidence &&
+					(payment?.sender === address || payment?.recipient === address) && (
+						<button
+							className="btn btn-info gap-2  w-40"
+							onClick={() => {
+								handleOpen()
+							}}
+						>
+							Sumbit Evidence
+						</button>
+					)}
+				<button
+					className="btn btn-info gap-2  w-40"
+					onClick={() => {
+						handleNextPeriod()
+					}}
+				>
+					Next period
+				</button>
+			</div>
+			<div className="mb-36"></div>
+			<Modal
+				open={open}
+				onClose={handleClose}
+				aria-labelledby="modal-modal-title"
+				aria-describedby="modal-modal-description"
+			>
+				{dispute?.period === Period.commit ? (
+					<Box sx={style}>
+						<Typography id="modal-modal-title" variant="h6" component="h2">
+							Commit vote
+						</Typography>
+						<select
+							className="select select-info w-full max-w-xs m-12"
+							onChange={e => {
+								setVote(e.target.value)
+							}}
+						>
+							<option disabled selected>
+								Select vote
+							</option>
+							<option>Payer win</option>
+							<option>Recipient win</option>
+						</select>
+						<button
+							className="btn btn-info gap-2  w-24 mt-12"
+							onClick={() => {
+								handleCommitVote()
+							}}
+						>
+							Submit
+						</button>
+					</Box>
+				) : (
+					<Box sx={style}>
+						<Typography id="modal-modal-title" variant="h6" component="h2">
+							Upload evidence
+						</Typography>
+
+						<input
+							type="file"
+							className="file-input file-input-bordered file-input-info w-full max-w-xs mt-4"
+						/>
+						<button
+							className="btn btn-info gap-2  w-24 mt-12"
+							onClick={() => {
+								handleSubmitEvidence()
+							}}
+						>
+							Submit
+						</button>
+					</Box>
+				)}
+			</Modal>
 		</div>
 	)
 }

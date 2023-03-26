@@ -76,7 +76,7 @@ const CreatePayment: FC = () => {
 			const value = ethers.utils.parseEther(amount)
 			console.log(tabValue)
 			if (!tabValue)
-				paymentContract.createPayment(10, true, result[0], ethers.constants.HashZero, {
+				paymentContract.createPayment(60, true, result[0], ethers.constants.HashZero, {
 					value: value,
 				})
 			else {
