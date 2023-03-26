@@ -79,7 +79,8 @@ const Payment: FC = () => {
 		const voteId = localStorage.getItem(address + 'id')
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
-		await arbitratorContract.castVote(Number(disputeId), Number(voteId), salt)
+		console.log(voteId, voteNumber, salt)
+		await arbitratorContract.castVote(Number(disputeId), Number(voteId), Number(voteNumber), salt)
 	}
 
 	const handleCommitVote = async () => {
@@ -260,7 +261,7 @@ const Payment: FC = () => {
 			)}
 			<div className="flex gap-6 mt-12">
 				{dispute?.period === Period.vote && (
-					<button className="btn btn-info gap-2 w-40" onClick={() => handleOpen()}>
+					<button className="btn btn-info gap-2 w-40" onClick={() => hanldeCastVote()}>
 						Cast Vote
 					</button>
 				)}
