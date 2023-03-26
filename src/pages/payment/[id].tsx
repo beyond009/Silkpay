@@ -67,6 +67,7 @@ const Payment: FC = () => {
 			setDispute(dispute)
 		}
 	}
+
 	const hanldeCastVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
@@ -77,6 +78,7 @@ const Payment: FC = () => {
 		)
 		await arbitratorContract.castVote(Number(disputeId), 0, 12345678)
 	}
+
 	const handleCommitVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
@@ -90,7 +92,7 @@ const Payment: FC = () => {
 		// const salt = ethers.utils.randomBytes(30)
 		const salt = 12345678
 		const abiCoder = new ethers.utils.AbiCoder()
-		const res = abiCoder.encode(['uint', 'unit'], [voteNumber, salt])
+		const res = abiCoder.encode(['int', 'int'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
 		const voteId = await arbitratorContract.commit(Number(disputeId), commit)
 		console.log(voteId)
