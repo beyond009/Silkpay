@@ -14,10 +14,11 @@ import { ethers, utils } from 'ethers'
 import { MerkleTree } from 'merkletreejs'
 // import * as fs from 'fs';
 
+export let merkletree;
 const createMerkleTree = addresses => {
 	// create leaf based on keccak256 hash
 	const leaf = addresses.map(x => utils.keccak256(x))
-	const merkletree = new MerkleTree(leaf, utils.keccak256, { sortPairs: true })
+	merkletree = new MerkleTree(leaf, utils.keccak256, { sortPairs: true })
 	// get root
 	const root = merkletree.getHexRoot()
 
