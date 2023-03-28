@@ -1,9 +1,5 @@
 import { FC, useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { APP_NAME } from '@/lib/consts'
-import ConnectWallet from '@/components/ConnectWallet'
-import { Header } from '@/components/Header'
 import { CurrencyDollarIcon, ClockIcon, IdentificationIcon } from '@heroicons/react/outline'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
@@ -12,7 +8,6 @@ import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
 import { useAccount } from 'wagmi'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 
@@ -166,7 +161,7 @@ const Payment: FC = () => {
 		if (days >= 1) return `${Math.floor(days)} ${days > 1 ? 'days' : 'day'}`
 		return `${Math.floor(hours)} ${hours > 1 ? 'hours' : 'hour'}`
 	}
-	
+
 	const isGracePeriod: Boolean = useMemo(() => {
 		if (payment) {
 			if (
