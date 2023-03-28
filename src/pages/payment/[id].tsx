@@ -68,13 +68,13 @@ const Payment: FC = () => {
 		const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, signer)
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
-		const voteCount = await arbitratorContract.getVotedCount(Number(disputeId))
-		console.log('vote count', voteCount.toNumber(), dispute.votes)
+		const votes = await arbitratorContract.getVotes(Number(disputeId))
+		console.log(votes, 'votes')
 		let voteId = 0
-		for (let i = 0; i < voteCount.toNumber(); i++) {
-			if (dispute.votes[i].account === address) {
+		for (let i = 0; i < votes.length; i++) {
+			if (votes[i].account === address) {
 				voteId = i
-				return
+				break
 			}
 		}
 		console.log('vote id', voteId, 'vote choice', voteNumber, 'salt', salt, Number(disputeId))
@@ -122,6 +122,14 @@ const Payment: FC = () => {
 			paymentContract.submitEvidenceByRecipient(Number(id), '')
 		}
 		handleClose()
+	}
+
+	const handleExcute = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, signer)
+		await arbitratorContract.executeRuling(Number(disputeId))
+		fetch()
 	}
 
 	const handlePay = async () => {
@@ -270,6 +278,11 @@ const Payment: FC = () => {
 						Commit Vote
 					</button>
 				)}
+				{dispute?.period === Period.execution && (
+					<button className="btn btn-info gap-2 w-40" onClick={() => handleExcute()}>
+						Excute
+					</button>
+				)}
 				{dispute?.period === Period.evidence &&
 					(payment?.sender === address || payment?.recipient === address) && (
 						<button
@@ -281,7 +294,7 @@ const Payment: FC = () => {
 							Sumbit Evidence
 						</button>
 					)}
-				{payment?.status === PaymnetStatus.Appealing && (
+				{payment?.status === PaymnetStatus.Appealing && dispute?.period != Period.execution && (
 					<button
 						className="btn btn-info gap-2  w-40"
 						onClick={() => {
