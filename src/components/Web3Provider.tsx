@@ -49,8 +49,19 @@ const gnosisTestNetwork: Chain = {
 	},
 	testnet: true,
 }
+const zkEVMNetwork: Chain = {
+	name: 'zkEVM',
+	network: 'zkEVM',
+	id: 1442,
+	nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+	rpcUrls: {
+		default: { http: ['https://rpc.public.zkevm-test.net'] },
+		public: { http: ['https://rpc.public.zkevm-test.net'] },
+	},
+	testnet: true,
+}
 const { chains, provider } = configureChains(
-	[scrollTestNetwork, gnosisNetwork, gnosisTestNetwork],
+	[scrollTestNetwork, gnosisNetwork, gnosisTestNetwork, zkEVMNetwork],
 	[
 		jsonRpcProvider({
 			rpc: chain => ({

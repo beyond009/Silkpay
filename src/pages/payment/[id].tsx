@@ -10,7 +10,6 @@ import { useAccount } from 'wagmi'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
-import { readFile } from 'fs'
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -78,7 +77,7 @@ const Payment: FC = () => {
 				return
 			}
 		}
-		console.log('vote id', voteId, voteNumber)
+		console.log('vote id', voteId, voteNumber, salt)
 		await arbitratorContract.castVote(Number(disputeId), voteId, Number(voteNumber), salt)
 	}
 
@@ -89,12 +88,11 @@ const Payment: FC = () => {
 		let voteNumber = 1
 		if (vote === 'Vote for Recipient') voteNumber = 2
 		// const salt = ethers.utils.randomBytes(30)
-		const salt = Math.floor(Math.random())
+		const salt = Math.random() * 1e16
 		const abiCoder = new ethers.utils.AbiCoder()
 		const res = abiCoder.encode(['int', 'int'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
 		const tx = await arbitratorContract.commit(Number(disputeId), commit)
-
 		localStorage.setItem(address + 'choice', voteNumber.toString())
 		localStorage.setItem(address + 'salt', salt.toString())
 	}
