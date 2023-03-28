@@ -63,7 +63,6 @@ const Payment: FC = () => {
 				provider
 			)
 			const dispute = await arbitratorContract.disputes(Number(disputeId))
-			console.log(dispute)
 			setDispute(dispute)
 		}
 	}
@@ -76,12 +75,19 @@ const Payment: FC = () => {
 			arbitratorABI,
 			signer
 		)
-		const voteId = localStorage.getItem(address + 'id')
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
-		console.log(voteId, voteNumber, salt)
-
-		await arbitratorContract.castVote(Number(disputeId), Number(0), Number(voteNumber), salt)
+		const voteCount = await arbitratorContract.getVotedCount(Number(disputeId))
+		console.log('vote count', voteCount)
+		let voteId = 0
+		for (let i = 0; i < voteCount; i++) {
+			if (dispute.votes[i].account === address) {
+				voteId = i
+				return
+			}
+		}
+		console.log('vote id', voteId)
+		await arbitratorContract.castVote(Number(disputeId), voteId, Number(voteNumber), salt)
 	}
 
 	const handleCommitVote = async () => {
