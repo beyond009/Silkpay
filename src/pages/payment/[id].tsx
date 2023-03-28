@@ -77,7 +77,7 @@ const Payment: FC = () => {
 				return
 			}
 		}
-		console.log('vote id', voteId, voteNumber, salt)
+		console.log('vote id', voteId, 'vote choice', voteNumber, 'salt', salt)
 		await arbitratorContract.castVote(Number(disputeId), voteId, Number(voteNumber), salt)
 	}
 
