@@ -89,7 +89,7 @@ const CreatePayment: FC = () => {
 					merkleTreeRoot,
 					{
 						value: value,
-						gasLimit: 153207,
+						gasLimit: 1000000,
 					}
 				)
 			}

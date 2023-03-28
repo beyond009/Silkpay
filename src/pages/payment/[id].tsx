@@ -230,6 +230,7 @@ const Payment: FC = () => {
 				<div className="text-xl">{payment?.targeted ? 'Recipient' : 'Recipients whitelist'}</div>
 				{payment?.targeted ? <div className="">{payment?.recipient}</div> : 'whitelist addresses'}
 			</div>
+
 			<div className="flex gap-6 mt-12">
 				{address === payment?.sender && PaymnetStatus[payment?.status] === 'Locking' ? (
 					<button
@@ -258,12 +259,26 @@ const Payment: FC = () => {
 			</div>
 			{payment?.status === PaymnetStatus.Appealing && (
 				<>
-					<div className="text-2xl mt-12 mb-6">Dispute</div>
+					<div className="text-2xl mt-24 mb-6">Dispute</div>
 					<div className="flex flex-col mb-12 gap-4">
 						<div className="text-xl">Dispute id: {Number(disputeId)}</div>
 						<div className="text-xl">
 							Period: <div className="badge"> {Period[dispute?.period]}</div>
 						</div>
+						<ul className="steps mt-12 w-full">
+							<li className={'step ' + (dispute?.period >= Period.evidence ? 'step-primary' : '')}>
+								Submit evidence
+							</li>
+							<li className={'step ' + (dispute?.period >= Period.commit ? 'step-primary' : '')}>
+								Commit vote
+							</li>
+							<li className={'step ' + (dispute?.period >= Period.vote ? 'step-primary' : '')}>
+								Cast vote
+							</li>
+							<li className={'step ' + (dispute?.period >= Period.execution ? 'step-primary' : '')}>
+								Excute
+							</li>
+						</ul>
 					</div>
 				</>
 			)}
