@@ -80,7 +80,8 @@ const Payment: FC = () => {
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
 		console.log(voteId, voteNumber, salt)
-		await arbitratorContract.castVote(Number(disputeId), Number(voteId), Number(voteNumber), salt)
+
+		await arbitratorContract.castVote(Number(disputeId), Number(0), Number(voteNumber), salt)
 	}
 
 	const handleCommitVote = async () => {
@@ -92,14 +93,16 @@ const Payment: FC = () => {
 			signer
 		)
 		let voteNumber = 0
-		if (vote === 'Recipient win') voteNumber = 1
+		if (vote === 'Vote for Recipient') voteNumber = 1
 		// const salt = ethers.utils.randomBytes(30)
 		const salt = Math.floor(Math.random())
 		const abiCoder = new ethers.utils.AbiCoder()
 		const res = abiCoder.encode(['int', 'int'], [voteNumber, salt])
 		const commit = ethers.utils.keccak256(res)
-		const voteId = await arbitratorContract.commit(Number(disputeId), commit)
-		console.log(voteId)
+		const tx = await arbitratorContract.commit(Number(disputeId), commit)
+
+		const voteId = await tx.wait()
+		console.log(voteId, 'sad')
 		localStorage.setItem(address + 'id', voteId.toString())
 		localStorage.setItem(address + 'choice', voteNumber.toString())
 		localStorage.setItem(address + 'salt', salt.toString())
