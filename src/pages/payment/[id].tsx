@@ -1,9 +1,5 @@
 import { FC, useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { APP_NAME } from '@/lib/consts'
-import ConnectWallet from '@/components/ConnectWallet'
-import { Header } from '@/components/Header'
 import { CurrencyDollarIcon, ClockIcon, IdentificationIcon } from '@heroicons/react/outline'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { abi as paymentABI } from '@/abi/SilkPayV1.json'
@@ -12,7 +8,6 @@ import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
 import { useAccount } from 'wagmi'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 
@@ -38,6 +33,9 @@ enum Period {
 	execution, // Tokens are redistributed and the ruling is executed.
 }
 
+const PAYMENT_CONTRACT_ADDRESS = '0x4B62466d0A6cC59c65b6C93917AD9D30de259266';
+const ARBITRATION_CONTRACT_ADDRESS = '0xFe22947b9234d1e8294A9B147E959543D0e2A483';
+
 const Payment: FC = () => {
 	const router = useRouter()
 	const { address } = useAccount()
@@ -51,14 +49,14 @@ const Payment: FC = () => {
 	const { id } = router.query
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, provider)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, provider)
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
 			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
 			setDisputeId(disputeId)
 			const arbitratorContract = new ethers.Contract(
-				'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
+				ARBITRATION_CONTRACT_ADDRESS,
 				arbitratorABI,
 				provider
 			)
@@ -71,7 +69,7 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
+			ARBITRATION_CONTRACT_ADDRESS,
 			arbitratorABI,
 			signer
 		)
@@ -94,7 +92,7 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
+			ARBITRATION_CONTRACT_ADDRESS,
 			arbitratorABI,
 			signer
 		)
@@ -118,7 +116,7 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const arbitratorContract = new ethers.Contract(
-			'0xFe22947b9234d1e8294A9B147E959543D0e2A483',
+			ARBITRATION_CONTRACT_ADDRESS,
 			arbitratorABI,
 			signer
 		)
@@ -128,7 +126,7 @@ const Payment: FC = () => {
 	const handleSubmitEvidence = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
 		if (payment?.sender === address) {
 			paymentContract.submitEvidenceBySender(Number(id), '')
 		}
@@ -137,28 +135,33 @@ const Payment: FC = () => {
 		}
 		handleClose()
 	}
+
 	const handlePay = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
 		await paymentContract.pay(Number(id))
 	}
+
 	const handleCreateDispute = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract('0x4B62466d0A6cC59c65b6C93917AD9D30de259266', paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
 		await paymentContract.raiseDisputeByRecipient(Number(id), { value: payment?.amount })
 	}
+
 	const formatDate = (start: number, lock: number) => {
 		console.log(start, lock, start + lock)
 		return new Date((start + lock) * 1000)
 	}
+
 	const formateTime = (unix: number) => {
 		const days = unix / 60 / 60 / 24
 		const hours = unix / 60 / 60
 		if (days >= 1) return `${Math.floor(days)} ${days > 1 ? 'days' : 'day'}`
 		return `${Math.floor(hours)} ${hours > 1 ? 'hours' : 'hour'}`
 	}
+
 	const isGracePeriod: Boolean = useMemo(() => {
 		if (payment) {
 			if (
@@ -191,7 +194,7 @@ const Payment: FC = () => {
 					<div className="stat-figure text-primary mt-3">
 						<CurrencyDollarIcon width={36} height={36} />
 					</div>
-					<div className="stat-title">Total amount</div>
+					<div className="stat-title">Total Amount</div>
 					<div className="stat-value text-primary">
 						{payment && ethers.utils.formatEther(payment['amount'])}ETH
 					</div>
@@ -214,7 +217,7 @@ const Payment: FC = () => {
 					<div className="stat-value">
 						{isGracePeriod ? 'Grace period' : payment ? PaymnetStatus[payment?.status] : 'Locking'}
 					</div>
-					<div className="stat-title">Current status</div>
+					<div className="stat-title">Current Status</div>
 					<div className="stat-desc text-secondary">
 						Locked until{' '}
 						{payment
@@ -297,7 +300,7 @@ const Payment: FC = () => {
 							handleNextPeriod()
 						}}
 					>
-						Next period
+						Next Period
 					</button>
 				)}
 			</div>

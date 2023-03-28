@@ -1,8 +1,15 @@
 import { useTheme } from 'next-themes'
-import { APP_NAME } from '@/lib/consts'
 import { createClient, WagmiConfig, Chain, configureChains } from 'wagmi'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
+
+export const contractAddress = {
+	scrollTestNetwork: {
+		paymentContract: '',
+		arbitrationContract: '',
+	},
+}
+
 const scrollTestNetwork: Chain = {
 	id: 534353,
 	name: 'Scroll Alpha Testnet',
