@@ -69,7 +69,7 @@ const CreatePayment: FC = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			const paymentContract = new ethers.Contract(
-				'0x4B62466d0A6cC59c65b6C93917AD9D30de259266',
+				'0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137',
 				paymentABI,
 				signer
 			)

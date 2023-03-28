@@ -33,8 +33,8 @@ enum Period {
 	execution, // Tokens are redistributed and the ruling is executed.
 }
 
-const PAYMENT_CONTRACT_ADDRESS = '0x4B62466d0A6cC59c65b6C93917AD9D30de259266'
-const ARBITRATION_CONTRACT_ADDRESS = '0xFe22947b9234d1e8294A9B147E959543D0e2A483'
+const PAYMENT_CONTRACT_ADDRESS = '0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137'
+const ARBITRATION_CONTRACT_ADDRESS = '0x47D7F6B196a58e08B70cfc7066901faca9863e52'
 
 const Payment: FC = () => {
 	const router = useRouter()
@@ -55,7 +55,7 @@ const Payment: FC = () => {
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
 			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
-			setDisputeId(disputeId)
+			setDisputeId(disputeId.toNumber())
 			const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, provider)
 			const dispute = await arbitratorContract.disputes(Number(disputeId))
 			setDispute(dispute)
@@ -69,15 +69,15 @@ const Payment: FC = () => {
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
 		const voteCount = await arbitratorContract.getVotedCount(Number(disputeId))
-		console.log('vote count', voteCount)
+		console.log('vote count', voteCount.toNumber(), dispute.votes)
 		let voteId = 0
-		for (let i = 0; i < voteCount; i++) {
+		for (let i = 0; i < voteCount.toNumber(); i++) {
 			if (dispute.votes[i].account === address) {
 				voteId = i
 				return
 			}
 		}
-		console.log('vote id', voteId, 'vote choice', voteNumber, 'salt', salt)
+		console.log('vote id', voteId, 'vote choice', voteNumber, 'salt', salt, Number(disputeId))
 		await arbitratorContract.castVote(Number(disputeId), voteId, Number(voteNumber), salt)
 	}
 
@@ -110,8 +110,9 @@ const Payment: FC = () => {
 		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
 		const fileInput = document.getElementById('fileInput') as HTMLInputElement
 		const fileReader = new FileReader()
-		fileReader.onload = async () => {
+		fileReader.onload = async file => {
 			//todo: upload file to web3 storage
+			console.log(file.target?.result)
 		}
 		fileReader.readAsArrayBuffer(fileInput.files[0])
 		if (payment?.sender === address) {

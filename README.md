@@ -7,8 +7,8 @@
 -   smart contract deploy:
 
     -   scroll alpha testnet:
-        SilkArbitrator 0xFe22947b9234d1e8294A9B147E959543D0e2A483
-        SilkPayV1 0x4B62466d0A6cC59c65b6C93917AD9D30de259266
+        SilkArbitrator 0x47D7F6B196a58e08B70cfc7066901faca9863e52
+        SilkPayV1 0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137
 
     -   chiado (gnosis testnet)：
         SilkArbitrator 0xAd8efd46bE9E93dbB4B416FcDDE022fD11a61016
