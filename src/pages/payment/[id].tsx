@@ -10,6 +10,7 @@ import { useAccount } from 'wagmi'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
+import { readFile } from 'fs'
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -33,8 +34,8 @@ enum Period {
 	execution, // Tokens are redistributed and the ruling is executed.
 }
 
-const PAYMENT_CONTRACT_ADDRESS = '0x4B62466d0A6cC59c65b6C93917AD9D30de259266';
-const ARBITRATION_CONTRACT_ADDRESS = '0xFe22947b9234d1e8294A9B147E959543D0e2A483';
+const PAYMENT_CONTRACT_ADDRESS = '0x4B62466d0A6cC59c65b6C93917AD9D30de259266'
+const ARBITRATION_CONTRACT_ADDRESS = '0xFe22947b9234d1e8294A9B147E959543D0e2A483'
 
 const Payment: FC = () => {
 	const router = useRouter()
@@ -47,6 +48,7 @@ const Payment: FC = () => {
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
 	const { id } = router.query
+
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, provider)
@@ -55,11 +57,7 @@ const Payment: FC = () => {
 		if (res.status === PaymnetStatus.Appealing) {
 			const disputeId = await paymentContract.PaymentIdtoDisputeId(Number(id))
 			setDisputeId(disputeId)
-			const arbitratorContract = new ethers.Contract(
-				ARBITRATION_CONTRACT_ADDRESS,
-				arbitratorABI,
-				provider
-			)
+			const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, provider)
 			const dispute = await arbitratorContract.disputes(Number(disputeId))
 			setDispute(dispute)
 		}
@@ -68,11 +66,7 @@ const Payment: FC = () => {
 	const hanldeCastVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const arbitratorContract = new ethers.Contract(
-			ARBITRATION_CONTRACT_ADDRESS,
-			arbitratorABI,
-			signer
-		)
+		const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, signer)
 		const voteNumber = localStorage.getItem(address + 'choice')
 		const salt = localStorage.getItem(address + 'salt')
 		const voteCount = await arbitratorContract.getVotedCount(Number(disputeId))
@@ -84,20 +78,16 @@ const Payment: FC = () => {
 				return
 			}
 		}
-		console.log('vote id', voteId)
+		console.log('vote id', voteId, voteNumber)
 		await arbitratorContract.castVote(Number(disputeId), voteId, Number(voteNumber), salt)
 	}
 
 	const handleCommitVote = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const arbitratorContract = new ethers.Contract(
-			ARBITRATION_CONTRACT_ADDRESS,
-			arbitratorABI,
-			signer
-		)
-		let voteNumber = 0
-		if (vote === 'Vote for Recipient') voteNumber = 1
+		const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, signer)
+		let voteNumber = 1
+		if (vote === 'Vote for Recipient') voteNumber = 2
 		// const salt = ethers.utils.randomBytes(30)
 		const salt = Math.floor(Math.random())
 		const abiCoder = new ethers.utils.AbiCoder()
@@ -105,9 +95,6 @@ const Payment: FC = () => {
 		const commit = ethers.utils.keccak256(res)
 		const tx = await arbitratorContract.commit(Number(disputeId), commit)
 
-		const voteId = await tx.wait()
-		console.log(voteId, 'sad')
-		localStorage.setItem(address + 'id', voteId.toString())
 		localStorage.setItem(address + 'choice', voteNumber.toString())
 		localStorage.setItem(address + 'salt', salt.toString())
 	}
@@ -115,11 +102,7 @@ const Payment: FC = () => {
 	const handleNextPeriod = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const arbitratorContract = new ethers.Contract(
-			ARBITRATION_CONTRACT_ADDRESS,
-			arbitratorABI,
-			signer
-		)
+		const arbitratorContract = new ethers.Contract(ARBITRATION_CONTRACT_ADDRESS, arbitratorABI, signer)
 		await arbitratorContract.passPeriod(Number(disputeId))
 		fetch()
 	}
@@ -127,6 +110,12 @@ const Payment: FC = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
+		const fileInput = document.getElementById('fileInput') as HTMLInputElement
+		const fileReader = new FileReader()
+		fileReader.onload = async () => {
+			//todo: upload file to web3 storage
+		}
+		fileReader.readAsArrayBuffer(fileInput.files[0])
 		if (payment?.sender === address) {
 			paymentContract.submitEvidenceBySender(Number(id), '')
 		}
@@ -344,6 +333,7 @@ const Payment: FC = () => {
 						</Typography>
 
 						<input
+							id="fileInput"
 							type="file"
 							className="file-input file-input-bordered file-input-info w-full max-w-xs mt-4"
 						/>
