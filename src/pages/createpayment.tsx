@@ -4,7 +4,7 @@ import { Header } from '@/components/Header'
 import { ArrowLeftIcon } from '@heroicons/react/outline'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { BackButton } from '@/components/BackButton'
-import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import contract from '@/abi/SilkPayV1.json'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
@@ -69,8 +69,8 @@ const CreatePayment: FC = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			const paymentContract = new ethers.Contract(
-				'0x03065c887fEE8e392Ade23D4d8E5e2feE07b47A7',
-				paymentABI,
+				'0x9B32575506321b5c2d68bdA2Dc0F29b56DE0c387',
+				contract.abi,
 				signer
 			)
 			const value = ethers.utils.parseEther(amount)

@@ -7,8 +7,8 @@
 -   smart contract deploy:
 
     -   bnb chain testnet:
-        SilkArbitrator
-        SilkPayV1 0x03065c887fEE8e392Ade23D4d8E5e2feE07b47A7
+        SilkArbitrator 0x6a5d75E3dAf97aF3D689657Cb884e30f8F88fa06
+        SilkPayV1 0x9B32575506321b5c2d68bdA2Dc0F29b56DE0c387
 
     -   scroll alpha testnet:
         SilkArbitrator 0x47D7F6B196a58e08B70cfc7066901faca9863e52

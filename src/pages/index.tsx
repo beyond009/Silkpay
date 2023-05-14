@@ -4,7 +4,7 @@ import ConnectWallet from '@/components/ConnectWallet'
 import { Header } from '@/components/Header'
 import { BookOpenIcon, CodeIcon, ShareIcon, PlusIcon } from '@heroicons/react/outline'
 import { ethers } from 'ethers'
-import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import contract from '@/abi/SilkPayV1.json'
 import { useAccount } from 'wagmi'
 import Router from 'next/router'
 
@@ -23,7 +23,11 @@ const Home: FC = () => {
 	}
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract('0x03065c887fEE8e392Ade23D4d8E5e2feE07b47A7', paymentABI, provider)
+		const paymentContract = new ethers.Contract(
+			'0x9B32575506321b5c2d68bdA2Dc0F29b56DE0c387',
+			contract.abi,
+			provider
+		)
 		const senderPayment = await paymentContract.getPaymentIDsBySender(address)
 		const recipientPayment = await paymentContract.getPaymentIDsByRecipient(address)
 		const tPayments = []
