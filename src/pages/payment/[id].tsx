@@ -33,7 +33,7 @@ enum Period {
 	execution, // Tokens are redistributed and the ruling is executed.
 }
 
-const PAYMENT_CONTRACT_ADDRESS = '0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137'
+const PAYMENT_CONTRACT_ADDRESS = '0x03065c887fEE8e392Ade23D4d8E5e2feE07b47A7'
 const ARBITRATION_CONTRACT_ADDRESS = '0x47D7F6B196a58e08B70cfc7066901faca9863e52'
 
 const Payment: FC = () => {
