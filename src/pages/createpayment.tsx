@@ -102,7 +102,7 @@ const CreatePayment: FC = () => {
 				<BackButton />
 			</div>
 			<div className="flex flex-col w-full gap-6 form mt-12">
-				<div className="flex text-2xl">Payment amount (ETH)</div>
+				<div className="flex text-2xl">Payment amount (BNB)</div>
 				<input ref={amountRef} type="text" placeholder="Type here" className="input input-bordered w-full" />
 				<div className="flex text-2xl">Locked until</div>
 				<LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -192,7 +192,7 @@ const Payment: FC = () => {
 					</div>
 					<div className="stat-title">Total Amount</div>
 					<div className="stat-value text-primary">
-						{payment && ethers.utils.formatEther(payment['amount'])}ETH
+						{payment && ethers.utils.formatEther(payment['amount'])}BNB
 					</div>
 					{/* <div className="stat-desc">desc</div> */}
 				</div>

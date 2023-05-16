@@ -81,7 +81,7 @@ const Home: FC = () => {
 								{v.targeted ? desensitizationAddress(v.recipient) : 'whitelist'}
 							</div>
 							<div>{Number(v.id)}</div>
-							{ethers.utils.formatEther(v.amount)} ETH
+							{ethers.utils.formatEther(v.amount)} BNB
 							<div className="badge absolute right-8">{PaymnetStatus[v.status]}</div>
 						</div>
 					)
