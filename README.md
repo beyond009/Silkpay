@@ -6,6 +6,10 @@
 -   smart contract repository: https://github.com/TecSong/SilkPay
 -   smart contract deploy:
 
+    -   bnb chain testnet:
+        SilkArbitrator 0x6a5d75E3dAf97aF3D689657Cb884e30f8F88fa06
+        SilkPayV1 0x9B32575506321b5c2d68bdA2Dc0F29b56DE0c387
+
     -   scroll alpha testnet:
         SilkArbitrator 0x47D7F6B196a58e08B70cfc7066901faca9863e52
         SilkPayV1 0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137

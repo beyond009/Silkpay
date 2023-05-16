@@ -10,6 +10,21 @@ export const contractAddress = {
 	},
 }
 
+const bnbtestnetNetwork: Chain = {
+	id: 97,
+	name: 'Binance Smart Chain Testnet',
+	network: 'Binance Smart Chain Testnet',
+	nativeCurrency: { name: 'TBNB', symbol: 'TBNB', decimals: 18 },
+	rpcUrls: {
+		default: { http: ['https://data-seed-prebsc-1-s1.binance.org:8545'] },
+		public: { http: ['https://data-seed-prebsc-1-s1.binance.org:8545'] },
+	},
+	blockExplorers: {
+		default: { name: 'Binance explorer', url: 'https://testnet.bscscan.com/' },
+	},
+	testnet: true,
+}
+
 const scrollTestNetwork: Chain = {
 	id: 534353,
 	name: 'Scroll Alpha Testnet',
@@ -61,7 +76,7 @@ const zkEVMNetwork: Chain = {
 	testnet: true,
 }
 const { chains, provider } = configureChains(
-	[scrollTestNetwork, gnosisNetwork, gnosisTestNetwork, zkEVMNetwork],
+	[bnbtestnetNetwork, scrollTestNetwork, gnosisNetwork, gnosisTestNetwork, zkEVMNetwork],
 	[
 		jsonRpcProvider({
 			rpc: chain => ({

@@ -2,7 +2,7 @@ import { FC, useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { CurrencyDollarIcon, ClockIcon, IdentificationIcon } from '@heroicons/react/outline'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { abi as paymentABI } from '@/abi/SilkPayV1.json'
+import contract from '@/abi/SilkPayV1.json'
 import { abi as arbitratorABI } from '@/abi/SilkArbitrator.json'
 import { BackButton } from '@/components/BackButton'
 import { PaymnetStatus } from '..'
@@ -33,8 +33,8 @@ enum Period {
 	execution, // Tokens are redistributed and the ruling is executed.
 }
 
-const PAYMENT_CONTRACT_ADDRESS = '0x6dD245E5bAcfdE61C3D49f7d5C94FF8E68faa137'
-const ARBITRATION_CONTRACT_ADDRESS = '0x47D7F6B196a58e08B70cfc7066901faca9863e52'
+const PAYMENT_CONTRACT_ADDRESS = '0x9B32575506321b5c2d68bdA2Dc0F29b56DE0c387'
+const ARBITRATION_CONTRACT_ADDRESS = '0x6a5d75E3dAf97aF3D689657Cb884e30f8F88fa06'
 
 const Payment: FC = () => {
 	const router = useRouter()
@@ -50,7 +50,7 @@ const Payment: FC = () => {
 
 	const fetch = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, provider)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, contract.abi, provider)
 		const res = await paymentContract.payments(Number(id))
 		setPayment(res)
 		if (res.status === PaymnetStatus.Appealing) {
@@ -107,7 +107,7 @@ const Payment: FC = () => {
 	const handleSubmitEvidence = () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, contract.abi, signer)
 		const fileInput = document.getElementById('fileInput') as HTMLInputElement
 		const fileReader = new FileReader()
 		fileReader.onload = async file => {
@@ -135,14 +135,14 @@ const Payment: FC = () => {
 	const handlePay = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, contract.abi, signer)
 		await paymentContract.pay(Number(id))
 	}
 
 	const handleCreateDispute = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
-		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentABI, signer)
+		const paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, contract.abi, signer)
 		await paymentContract.raiseDisputeByRecipient(Number(id), { value: payment?.amount })
 	}
 
